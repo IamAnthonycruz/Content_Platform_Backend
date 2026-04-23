@@ -7,4 +7,5 @@ public interface UserService {
     RegisterResponseDTO register(RegisterRequestDTO registerRequestDTO);
     LoginResponseDTO login (LoginRequestDTO loginRequestDTO);
     RefreshResponseDTO refresh(RefreshRequestDTO refreshRequestDTO);
+    void logout(RefreshRequestDTO refreshRequestDTO);
 }

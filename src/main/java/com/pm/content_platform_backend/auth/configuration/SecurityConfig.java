@@ -1,37 +1,42 @@
 package com.pm.content_platform_backend.auth.configuration;
 
 
+import com.pm.content_platform_backend.auth.security.JwtAuthenticationFilter;
 import com.pm.content_platform_backend.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // 1. Disable CSRF (Required for POST requests in a stateless API)
-        http.csrf(csrf -> csrf.disable());
-
-        // 2. Set session management to STATELESS
-        http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-
-        // 3. Configure endpoint permissions
-        http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/api/v1/auth/**").permitAll(); // Public endpoints
-            auth.anyRequest().authenticated();                  // Everything else protected
-        });
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(
+                            "/api/v1/auth/register",
+                            "/api/v1/auth/login",
+                            "/api/v1/auth/refresh"
+                    ).permitAll();
+                    auth.anyRequest().authenticated();
+                })
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

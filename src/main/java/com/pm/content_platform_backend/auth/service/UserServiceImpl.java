@@ -77,4 +77,9 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+    @Override
+    public void logout(RefreshRequestDTO refreshRequestDTO) {
+        refreshTokenService.revoke(refreshRequestDTO.getRefreshToken());
+    }
+
 }

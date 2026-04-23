@@ -1,5 +1,6 @@
 package com.pm.content_platform_backend.auth.service;
 
+import com.pm.content_platform_backend.auth.exception.InvalidCredentialException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;

@@ -3,16 +3,15 @@ package com.pm.content_platform_backend.auth.controller;
 
 
 import com.pm.content_platform_backend.auth.dto.*;
+import com.pm.content_platform_backend.auth.security.UserPrincipal;
 import com.pm.content_platform_backend.auth.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +32,17 @@ public class AuthController {
     public ResponseEntity<RefreshResponseDTO> refresh(@Valid @RequestBody RefreshRequestDTO refreshRequestDTO){
         RefreshResponseDTO responseDTO = userService.refresh(refreshRequestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserPrincipal> me(@AuthenticationPrincipal UserPrincipal userPrincipal){
+        return new ResponseEntity<>(userPrincipal, HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@Valid @RequestBody RefreshRequestDTO refreshRequestDTO) {
+        userService.logout(refreshRequestDTO);
+        return ResponseEntity.noContent().build();
     }
 
 }

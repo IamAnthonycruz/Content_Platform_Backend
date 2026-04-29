@@ -1,12 +1,14 @@
 package com.pm.content_platform_backend.posts.entity;
 
 
+import com.pm.content_platform_backend.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -16,7 +18,8 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Posts {
+@Table(name = "Posts")
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "post_id", nullable = false)
@@ -31,6 +34,7 @@ public class Posts {
     @Column(name = "post_excerpt", nullable = false)
     private String excerpt;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "post_status", nullable = false)
     private Status status = Status.DRAFT;
 
@@ -40,6 +44,7 @@ public class Posts {
     @Column(name = "published_at")
     private Instant publishedAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private Instant updatedAt;
 
@@ -47,11 +52,8 @@ public class Posts {
     @Column(name = "created_at",nullable = false)
     private Instant createdAt;
 
-
-
-
-
-
-    //One author can have many posts
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private User user;
 
 }
